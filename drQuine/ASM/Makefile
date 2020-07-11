@@ -8,7 +8,7 @@ ifeq ($(OS),Darwin)
 endif
 
 ####### LINUX #######
-ifeq ($(OS),Debian)
+ifeq ($(OS),Linux)
 	DIR = ./linux
 	NASM = nasm -f elf64
 	LINKER = gcc -no-pie -nostartfiles 
