@@ -3,7 +3,7 @@
 all: Colleen Grace Sully
 
 clean:
-	rm -f Colleen Grace Sully Grace_kid.c Sully_* a.out
+	rm -f Colleen Grace Sully Grace_kid.c Sully_*.c a.out
 	echo " { \033[34mD E L E T E D\033[0m }"
 
 re: clean all

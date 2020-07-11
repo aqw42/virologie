@@ -3,8 +3,8 @@ OS := $(shell uname)
 ####### MACOS #######
 ifeq ($(OS),Darwin)
 	DIR = ./macos
-	NASM = echo
-	LINKER = echo
+	NASM = nasm -f macho64
+	LINKER = gcc -no-pie -nostartfiles -arch x86_64
 endif
 
 ####### LINUX #######
