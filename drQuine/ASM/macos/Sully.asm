@@ -6,7 +6,7 @@ command: db 59, " ./a.out", 0
 x: equ 5
 code:   db " %4$d", 0
 
-filename: db "prout"
+filename: db "prout", 0
 
 SECTION .text
 extern dprintf

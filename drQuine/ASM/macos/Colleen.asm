@@ -7,9 +7,9 @@ global _main
 extern _printf
 _main:
 	lea rdi, [code]
-	mov esi, 10
+	mov rsi, 10
+	mov rdx, 34
 	lea rcx, [code]
-	mov edx, 34
 	xor eax, eax
 	call _printf
 
