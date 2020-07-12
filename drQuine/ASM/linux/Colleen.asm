@@ -4,6 +4,7 @@ code: db "DEFAULT REL%1$cSECTION .rodata%1$ccode: db %2$c%3$s%2$c%1$c%1$cSECTION
 
 SECTION .text
 extern printf
+extern exit
 global _start
 _start:
 	mov edi, code
@@ -13,6 +14,4 @@ _start:
 	xor eax, eax
 	call printf
 
-	mov eax, 60
-	xor edi, edi
-	syscall ;end
+	call exit
