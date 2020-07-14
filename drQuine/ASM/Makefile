@@ -4,14 +4,14 @@ OS := $(shell uname)
 ifeq ($(OS),Darwin)
 	DIR = ./macos
 	NASM = nasm -f macho64
-	LINKER = gcc -no-pie -nostartfiles -arch x86_64
+	LINKER = clang -arch x86_64
 endif
 
 ####### LINUX #######
 ifeq ($(OS),Linux)
 	DIR = ./linux
 	NASM = nasm -f elf64
-	LINKER = gcc -no-pie -nostartfiles 
+	LINKER = gcc
 endif
 
 all: Colleen Grace Sully
