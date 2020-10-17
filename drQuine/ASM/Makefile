@@ -11,13 +11,13 @@ endif
 ifeq ($(OS),Linux)
 	DIR = ./linux
 	NASM = nasm -f elf64
-	LINKER = gcc
+	LINKER = gcc -no-pie -g3
 endif
 
 all: Colleen Grace Sully
 
 clean:
-	rm -rf */*.o Colleen Grace Sully Sully_*.asm Grace_kid.asm a.out
+	rm -rf */*.o Colleen Grace Sully Sully_* Grace_kid.asm a.out
 
 Colleen: $(DIR)/Colleen.o
 	$(LINKER) $(DIR)/Colleen.o -o Colleen
