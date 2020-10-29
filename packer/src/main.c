@@ -1,63 +1,78 @@
 #include "packer.h"
 
+/* 
+ * \brief Display usage  
+ */
 void usage()
 {
 	write(1, "./packer filename", 18);
 }
 
-char *read_file(char *filename)
+/* 
+ * \brief Read a binary file content  
+ * 
+ * \arg [in]  name of the file to read
+ * \arg [out] length read in bytes
+ * 
+ * \return pointer to content. Need to be freed !
+ */
+char *read_file(char *filename, size_t *length_arg)
 {
-	int   fd  = 0;
-	char *ret = NULL;
-	char *tmp = NULL;
-	char  buffer[256];
+	int   	fd  = 0;
+	char 	*ret = NULL;
+	char	*tmp = NULL;
+	char  	buffer[BUFF_SIZE];
+	size_t	length = 0;
 
 	fd = open(filename, O_RDWR);
 	if (fd < 0)
 		return NULL;
-	bzero(buffer, BUFF_SIZE + 1);
-	while (read(fd, buffer, BUFF_SIZE) != 0)
+	bzero(buffer, BUFF_SIZE);
+	while (read(fd, buffer, BUFF_SIZE) > 0)
 	{
-		tmp = ret;
-		if (!(ret = ft_strjoin(ret, buffer)))
+		length += BUFF_SIZE;
+		tmp = realloc(ret, length);
+		if (tmp == NULL)
+		{
+			free(ret);
 			return NULL;
-		free(tmp);
-		if (ft_memchr(buffer, '\0', BUFF_SIZE) != NULL)
-			break ;
-		bzero(buffer, BUFF_SIZE + 1);
+		}
+		ret = tmp;
+		memcpy(&(ret[length - BUFF_SIZE]), buffer, BUFF_SIZE);
+		bzero(buffer, BUFF_SIZE);
 	}
+	*length_arg = length;
 	return ret;
 }
 
 int main(int argc, char **argv)
 {
-	int  fd;
-	char *file = NULL;
+	char 	*file = NULL;
+	size_t	length = 0;
 
 	if (argc != 2 || *(argv[1]) == '\0')
 	{
 		usage();
 		return EXIT_FAILURE;
 	}
-	if ((fd = open(argv[1], O_RDWR)) < 0)
+	if ((file = read_file(argv[1], &length)) == NULL)
 	{
-		ERROR("File opening");
-		return EXIT_FAILURE;
-	}
-	if ((file = get_the_file(fd)) == NULL)
-	{
-		close(fd);
 		ERROR("File reading");
 		return EXIT_FAILURE;
-	}	
-	if (packer(file) == false)
+	}
+	if (!is_valid_elf64(file, length))
 	{
-		close(fd);
 		free(file);
-		ERROR("packer");
+		ERROR("Wrong binary format ! Are you sure it's an Elf64 binary file ?");
+		return false;
+	}
+	if (packer(file, length) == false)
+	{
+		free(file);
+		unlink(EXE_FILENAME);
+		ERROR("Packing failed");
 		return EXIT_FAILURE;
 	}
-	close(fd);
 	free(file);
 	return EXIT_SUCCESS;
 }

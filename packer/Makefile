@@ -3,7 +3,8 @@ NAME=		packer
 ###### SOURCES #######
 
 SRC_NAME =	main.c\
-		packer.c
+			packer.c\
+			elf64.c
 SRC_DIR =	./src/
 SRC =		${addprefix $(SRC_DIR), $(SRC_NAME)}
 
@@ -18,16 +19,9 @@ HEADER_DIR =	./inc/
 HEADER_NAME =	packer.h
 HEADER =	${addprefix $(HEADER_DIR), $(HEADER_NAME)}
 
-#######  LIBS  ########
-
-LIB_NAME =	haflib.a
-LIB_DIR =	./haflib/
-LIB_HEADER =	./haflib/includes/
-LIB =		${addprefix $(LIB_DIR), $(LIB_NAME)}
-
 #######  MISC  ########
 
-FLAGS =		-Wall -Werror -Wextra -g
+FLAGS =		-Wall -Werror -Wextra -ansi -pedantic -g3
 DEBUG_FLAGS =	$(FLAGS) -O0 -fsanitize=address
 CC =		gcc
 
@@ -40,7 +34,7 @@ CC =		gcc
 
 ########## GENERALS ##########
 
-all: $(LIB) $(OBJ_DIR) $(NAME) $(HEADER)
+all: $(OBJ_DIR) $(NAME) $(HEADER)
 
 re: fclean all
 
@@ -50,10 +44,8 @@ lre:
 
 clean:
 	rm -rf $(OBJ_DIR)
-	make clean -C $(LIB_DIR)
 
 fclean:
-	make fclean -C $(LIB_DIR)
 	rm -rf $(OBJ_DIR) $(NAME) *.dSYM
 	echo "\033[31m\033[1m\033[4mCleaning\033[0m\033[31m : Everything\033[0m [$(NAME)]";
 
@@ -64,17 +56,17 @@ debug:
 ######### COMPILATION #########
 
 $(NAME): $(OBJ)
-	$(CC) $(FLAGS) $(OBJ) $(LIB) -o $(NAME) -I$(HEADER_DIR) -I$(LIB_DIR)
-	echo "\n \033[1m\033[4m\033[35m\\^/ Done compiling \\^/\033[0m [$(NAME)] --> $(LIB_NAME)"
+	$(CC) $(FLAGS) $(OBJ) -o $(NAME) -I$(HEADER_DIR)
+	echo "\n \033[1m\033[4m\033[35m\\^/ Done compiling \\^/\033[0m [$(NAME)]"
 	make header_print
 
-$(NAME)_debug: ./auteur $(LIB) $(OBJ_DIR) $(HEADER) $(OBJ)
-	$(CC) $(DEBUG_FLAGS) $(OBJ) $(LIB) -o $(NAME) -I$(HEADER_DIR) -I$(LIB_DIR)
-	echo "\n \033[1m\033[4m\033[35m\\^/ Done compiling \\^/\033[0m [$(NAME)] --> $(LIB_NAME)"
+$(NAME)_debug: $(OBJ_DIR) $(HEADER) $(OBJ)
+	$(CC) $(DEBUG_FLAGS) $(OBJ) -o $(NAME) -I$(HEADER_DIR)
+	echo "\n \033[1m\033[4m\033[35m\\^/ Done compiling \\^/\033[0m [$(NAME)]"
 	make header_print
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER)
-	$(CC) $(FLAGS) -c $< -o $@ -I$(HEADER_DIR) -I$(LIB_HEADER)
+	$(CC) $(FLAGS) -c $< -o $@ -I$(HEADER_DIR)
 	printf "\033[32m\033[1m\033[4mCompiling\033[0m\033[32m : %-30s \033[0m [$(NAME)]\n" $@
 
 $(OBJ_DIR): $(ALL_OBJ_DIR)
@@ -84,10 +76,6 @@ $(ALL_OBJ_DIR):
 	mkdir -p $@
 	echo "\033[32m\033[1m\033[4mCreated\033[0m\033[32m : $@ obj dir\033[0m"
 
-print_header:
+header_print:
 	echo done
 
-############# LIB #############
-
-$(LIB):
-	make -C $(LIB_DIR)
