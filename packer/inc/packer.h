@@ -11,7 +11,7 @@
 
 #define ERROR(s) write(2, "Error : "s"\n", strlen("Error : "s"\n"))
 #define EXE_FILENAME "woodie"
-#define BUFF_SIZE 256
+#define BUFF_SIZE 4096
 
 struct	packer
 {
